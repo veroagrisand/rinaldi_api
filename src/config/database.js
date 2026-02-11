@@ -36,4 +36,6 @@ BigInt.prototype.toJSON = function() {
   return Number(this);
 };
 
+console.log('Database pool created successfully');
+
 module.exports = { getConnection, pool };

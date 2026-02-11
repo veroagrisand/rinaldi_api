@@ -1,0 +1,846 @@
+openapi: 3.0.0
+info:
+  title: E-commerce API
+  description: REST API with Role-Based Access Control for E-commerce Platform
+  version: 2.0.0
+  contact:
+    name: API Support
+    email: support@example.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3000/api
+    description: Local development server
+  - url: https://api.example.com/api
+    description: Production server
+
+tags:
+  - name: Authentication
+    description: User authentication and authorization
+  - name: Users
+    description: User management operations
+  - name: Categories
+    description: Product category management
+  - name: Products
+    description: Product management
+  - name: Variants
+    description: Product variant management
+  - name: Cart
+    description: Shopping cart operations
+  - name: Transactions
+    description: Transaction processing
+  - name: Order Items
+    description: Order item management
+  - name: Data Stocks
+    description: Stock data management
+  - name: Banks
+    description: Bank information
+  - name: Coupons
+    description: Coupon and discount management
+  - name: News
+    description: News and announcements
+  - name: Notifications
+    description: User notifications
+  - name: Settings
+    description: System settings
+  - name: Reviews
+    description: Product reviews and ratings
+  - name: Monitoring
+    description: System monitoring endpoints
+  - name: Health
+    description: Health check and system status
+
+paths:
+  /:
+    get:
+      tags: [Health]
+      summary: API Health Check
+      description: Returns API status and available endpoints
+      responses:
+        200:
+          description: API is running
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: REST API with Role-Based Access Control is running
+                  version:
+                    type: string
+                    example: 2.0.0
+                  timestamp:
+                    type: string
+                    format: date-time
+                  endpoints:
+                    type: object
+                    properties:
+                      auth:
+                        type: string
+                        example: /api/auth
+                      users:
+                        type: string
+                        example: /api/users
+                      categories:
+                        type: string
+                        example: /api/categories
+                      products:
+                        type: string
+                        example: /api/products
+                      variants:
+                        type: string
+                        example: /api/variants
+                      cart:
+                        type: string
+                        example: /api/cart
+                      transactions:
+                        type: string
+                        example: /api/transactions
+                      orderItems:
+                        type: string
+                        example: /api/order-items
+                      dataStocks:
+                        type: string
+                        example: /api/data-stocks
+                      banks:
+                        type: string
+                        example: /api/banks
+                      coupons:
+                        type: string
+                        example: /api/coupons
+                      news:
+                        type: string
+                        example: /api/news
+                      notifications:
+                        type: string
+                        example: /api/notifications
+                      settings:
+                        type: string
+                        example: /api/settings
+                      reviews:
+                        type: string
+                        example: /api/reviews
+
+  /auth:
+    post:
+      tags: [Authentication]
+      summary: User Authentication
+      description: Authenticate user and return JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        200:
+          description: Authentication successful
+        401:
+          description: Invalid credentials
+
+  /users:
+    get:
+      tags: [Users]
+      summary: Get all users
+      description: Retrieve list of users (Admin only)
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: List of users retrieved
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden - Admin access required
+    post:
+      tags: [Users]
+      summary: Create new user
+      description: Register a new user account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, password]
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                role:
+                  type: string
+                  enum: [user, admin, reseller]
+                  default: user
+      responses:
+        201:
+          description: User created successfully
+        400:
+          description: Invalid input
+
+  /users/{id}:
+    get:
+      tags: [Users]
+      summary: Get user by ID
+      description: Retrieve user details
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: User details retrieved
+        404:
+          description: User not found
+    put:
+      tags: [Users]
+      summary: Update user
+      description: Update user information
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                role:
+                  type: string
+                  enum: [user, admin, reseller]
+      responses:
+        200:
+          description: User updated successfully
+        403:
+          description: Forbidden - insufficient permissions
+    delete:
+      tags: [Users]
+      summary: Delete user
+      description: Delete user account (Admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: User deleted successfully
+        403:
+          description: Forbidden - Admin access required
+
+  /categories:
+    get:
+      tags: [Categories]
+      summary: Get all categories
+      description: Retrieve list of product categories
+      responses:
+        200:
+          description: List of categories retrieved
+    post:
+      tags: [Categories]
+      summary: Create category
+      description: Create new product category (Admin only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                parentId:
+                  type: string
+      responses:
+        201:
+          description: Category created
+        403:
+          description: Admin access required
+
+  /categories/{id}:
+    get:
+      tags: [Categories]
+      summary: Get category by ID
+      description: Retrieve category details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Category details retrieved
+        404:
+          description: Category not found
+    put:
+      tags: [Categories]
+      summary: Update category
+      description: Update category information (Admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                parentId:
+                  type: string
+      responses:
+        200:
+          description: Category updated
+        403:
+          description: Admin access required
+    delete:
+      tags: [Categories]
+      summary: Delete category
+      description: Delete category (Admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Category deleted
+        403:
+          description: Admin access required
+
+  /products:
+    get:
+      tags: [Products]
+      summary: Get all products
+      description: Retrieve list of products with filtering
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        200:
+          description: List of products retrieved
+    post:
+      tags: [Products]
+      summary: Create product
+      description: Create new product (Admin/Reseller only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, price, categoryId]
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                price:
+                  type: number
+                  minimum: 0
+                categoryId:
+                  type: string
+                sku:
+                  type: string
+                stock:
+                  type: integer
+                  minimum: 0
+                images:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        201:
+          description: Product created
+        403:
+          description: Admin/Reseller access required
+
+  /products/{id}:
+    get:
+      tags: [Products]
+      summary: Get product by ID
+      description: Retrieve product details with variants
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Product details retrieved
+        404:
+          description: Product not found
+    put:
+      tags: [Products]
+      summary: Update product
+      description: Update product information (Admin/Reseller only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                price:
+                  type: number
+                  minimum: 0
+                categoryId:
+                  type: string
+                sku:
+                  type: string
+                stock:
+                  type: integer
+                  minimum: 0
+                images:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        200:
+          description: Product updated
+        403:
+          description: Admin/Reseller access required
+    delete:
+      tags: [Products]
+      summary: Delete product
+      description: Delete product (Admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Product deleted
+        403:
+          description: Admin access required
+
+  /variants:
+    post:
+      tags: [Variants]
+      summary: Create product variant
+      description: Create new variant for product (Admin/Reseller only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [productId, name, price]
+              properties:
+                productId:
+                  type: string
+                name:
+                  type: string
+                price:
+                  type: number
+                  minimum: 0
+                sku:
+                  type: string
+                stock:
+                  type: integer
+                  minimum: 0
+                attributes:
+                  type: object
+      responses:
+        201:
+          description: Variant created
+        403:
+          description: Admin/Reseller access required
+
+  /variants/{id}:
+    get:
+      tags: [Variants]
+      summary: Get variant by ID
+      description: Retrieve variant details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Variant details retrieved
+        404:
+          description: Variant not found
+    put:
+      tags: [Variants]
+      summary: Update variant
+      description: Update variant information (Admin/Reseller only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                price:
+                  type: number
+                  minimum: 0
+                sku:
+                  type: string
+                stock:
+                  type: integer
+                  minimum: 0
+                attributes:
+                  type: object
+      responses:
+        200:
+          description: Variant updated
+        403:
+          description: Admin/Reseller access required
+    delete:
+      tags: [Variants]
+      summary: Delete variant
+      description: Delete product variant (Admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Variant deleted
+        403:
+          description: Admin access required
+
+  /cart:
+    get:
+      tags: [Cart]
+      summary: Get cart items
+      description: Retrieve current user's shopping cart
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Cart items retrieved
+        401:
+          description: Unauthorized
+    post:
+      tags: [Cart]
+      summary: Add item to cart
+      description: Add product/variant to shopping cart
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [productId, quantity]
+              properties:
+                productId:
+                  type: string
+                variantId:
+                  type: string
+                quantity:
+                  type: integer
+                  minimum: 1
+      responses:
+        201:
+          description: Item added to cart
+        401:
+          description: Unauthorized
+
+  /cart/{id}:
+    put:
+      tags: [Cart]
+      summary: Update cart item
+      description: Update quantity of cart item
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [quantity]
+              properties:
+                quantity:
+                  type: integer
+                  minimum: 0
+      responses:
+        200:
+          description: Cart item updated
+        401:
+          description: Unauthorized
+    delete:
+      tags: [Cart]
+      summary: Remove cart item
+      description: Remove item from shopping cart
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Cart item removed
+        401:
+          description: Unauthorized
+
+  /transactions:
+    get:
+      tags: [Transactions]
+      summary: Get transactions
+      description: Retrieve transaction history (Admin sees all, users see their own)
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Transactions retrieved
+        401:
+          description: Unauthorized
+    post:
+      tags: [Transactions]
+      summary: Create transaction
+      description: Create new transaction from cart
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [paymentMethod, shippingAddress]
+              properties:
+                paymentMethod:
+                  type: string
+                shippingAddress:
+                  type: object
+                couponCode:
+                  type: string
+      responses:
+        201:
+          description: Transaction created
+        401:
+          description: Unauthorized
+
+  /order-items:
+    get:
+      tags: [Order Items]
+      summary: Get order items
+      description: Retrieve order items for transaction
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: transactionId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Order items retrieved
+        401:
+          description: Unauthorized
+
+  # Additional endpoints follow similar patterns...
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum: [user, admin, reseller]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        categoryId:
+          type: string
+        sku:
+          type: string
+        stock:
+          type: integer
+        images:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        statusCode:
+          type: integer
+        message:
+          type: string
+        path:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token with no expiration
+
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ForbiddenError:
+      description: Insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+security:
+  - bearerAuth: []

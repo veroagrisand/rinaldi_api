@@ -19,6 +19,8 @@ const newsRoutes = require('./src/routes/newsRoutes');
 const notificationRoutes = require('./src/routes/notificationRoutes');
 const settingsRoutes = require('./src/routes/settingsRoutes');
 const orderReviewRoutes = require('./src/routes/orderReviewRoutes');
+const monitoringRoutes = require('./src/routes/monitoring');
+
 
 const app = express();
 
@@ -90,34 +92,31 @@ app.use((req, res) => {
 // Global error handler (must be last)
 app.use(errorHandler);
 
+app.use('/api/monitoring', monitoringRoutes);
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`
-╔═══════════════════════════════════════════════════════╗
-║                                                       ║
-║   🚀 Server is running on port ${PORT}                 ║
-║                                                       ║
-║   📚 API Documentation:                                ║
-║   GET  http://localhost:${PORT}/                       ║
-║                                                       ║
-║   🔐 Roles:  user, admin, reseller                     ║
-║   🔒 JWT Authentication: No Expiration                ║
-║                                                       ║
-╚═══════════════════════════════════════════════════════╝
+Server is running on port ${PORT}
+
+API Documentation:
+GET http://localhost:${PORT}/
+
+Roles: user, admin, reseller
+JWT Authentication: No Expiration
   `);
 });
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err) => {
-  console.error('UNHANDLED REJECTION!  💥 Shutting down...');
+  console.error('UNHANDLED REJECTION!    Shutting down...');
   console.error(err.name, err.message);
   process.exit(1);
 });
 
-// Handle uncaught exceptions
 process.on('uncaughtException', (err) => {
-  console.error('UNCAUGHT EXCEPTION! 💥 Shutting down...');
+  console.error('UNCAUGHT EXCEPTION!  Shutting down...');
   console.error(err. name, err.message);
   process.exit(1);
 });

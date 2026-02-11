@@ -4,10 +4,8 @@ require('dotenv').config();
 
 const authMiddleware = (req, res, next) => {
   try {
-
     const authHeader = req.headers.authorization;
-    
-    if (!authHeader || !authHeader. startsWith('Bearer ')) {
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
       throw new ApiError(401, 'Access denied. No token provided or invalid format.');
     }
 

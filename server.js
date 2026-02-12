@@ -101,7 +101,7 @@ app.listen(PORT, () => {
 Server is running on port ${PORT}
 
 API Documentation:
-GET http://localhost:${PORT}/
+GET https://docs.verospace.app/
 
 Roles: user, admin, reseller
 JWT Authentication: No Expiration

@@ -36,50 +36,32 @@ app.use((req, res, next) => {
 });
 
 // Health check
-// app.get('/', (req, res) => {
-//   res.json({
-//     success: true,
-//     message: 'REST API with Role-Based Access Control is running',
-//     version: '2.0.0',
-//     timestamp: new Date().toISOString(),
-//     documentation: 'https://docs.verospace.app/',
-//     endpoints: {
-//       auth: '/api/auth',
-//       users: '/api/users',
-//       categories: '/api/categories',
-//       products: '/api/products',
-//       variants: '/api/variants',
-//       cart: '/api/cart',
-//       transactions: '/api/transactions',
-//       orderItems: '/api/order-items',
-//       dataStocks: '/api/data-stocks',
-//       banks: '/api/banks',
-//       coupons: '/api/coupons',
-//       news: '/api/news',
-//       notifications: '/api/notifications',
-//       settings: '/api/settings',
-//       reviews: '/api/reviews'
-//     }
-//   });
-app.get('/', async (req, res) => {
-  try {
-    const response = await fetch('http://docs.verospace.app/');
-    const data = await response.text();
-    
-    res.status(response.status);
-    response.headers.forEach((value, name) => {
-      res.set(name, value);
-    });
-    res.send(data);
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error connecting to docs subdomain',
-      error: error.message
-    });
-  }
-});
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'REST API with Role-Based Access Control is running',
+    version: '2.0.0',
+    timestamp: new Date().toISOString(),
+    documentation: 'https://docs.verospace.app/',
+    endpoints: {
+      auth: '/api/auth',
+      users: '/api/users',
+      categories: '/api/categories',
+      products: '/api/products',
+      variants: '/api/variants',
+      cart: '/api/cart',
+      transactions: '/api/transactions',
+      orderItems: '/api/order-items',
+      dataStocks: '/api/data-stocks',
+      banks: '/api/banks',
+      coupons: '/api/coupons',
+      news: '/api/news',
+      notifications: '/api/notifications',
+      settings: '/api/settings',
+      reviews: '/api/reviews'
+    }
+  })
+  });
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -137,6 +119,6 @@ process.on('unhandledRejection', (err) => {
 
 process.on('uncaughtException', (err) => {
   console.error('UNCAUGHT EXCEPTION!  Shutting down...');
-  console.error(err. name, err.message);
+  console.error(err.name, err.message);
   process.exit(1);
-});
+} );

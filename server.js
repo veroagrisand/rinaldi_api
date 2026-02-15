@@ -61,24 +61,24 @@ app.use((req, res, next) => {
 //       reviews: '/api/reviews'
 //     }
 //   });
-  app.get('/', (req, res) => {
-  // Sending an HTML response that includes an inline JavaScript script
-  res.send(`
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <title>Express JS Response</title>
-    </head>
-    <body>
-      <h1>REST API with Role-Based Access Control is running</h1>
-      <p>Version: 2.0.0</p>
-      <p>Timestamp: ${new Date().toISOString()}</p>
-      <p>Documentation: <a href="https://docs.verospace.app/" target="_blank">https://docs.verospace.app/</a></p>
-      <h2>Endpoints:</h2>
-        <script src="https://docs.verospace.app/~gitbook/embed/script.js"></script>
-    </body>
-    </html>
-  `);
+app.get('/', async (req, res) => {
+  try {
+    const response = await fetch('https://docs.verospace.app/');
+    const data = await response.text();
+    
+    res.status(response.status);
+    response.headers.forEach((value, name) => {
+      res.set(name, value);
+    });
+    res.send(data);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error connecting to docs subdomain',
+      error: error.message
+    });
+  }
 });
 
 // API Routes

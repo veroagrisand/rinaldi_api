@@ -36,30 +36,49 @@ app.use((req, res, next) => {
 });
 
 // Health check
-app.get('/', (req, res) => {
-  res.json({
-    success: true,
-    message: 'REST API with Role-Based Access Control is running',
-    version: '2.0.0',
-    timestamp: new Date().toISOString(),
-    endpoints: {
-      auth: '/api/auth',
-      users: '/api/users',
-      categories: '/api/categories',
-      products: '/api/products',
-      variants: '/api/variants',
-      cart: '/api/cart',
-      transactions: '/api/transactions',
-      orderItems: '/api/order-items',
-      dataStocks: '/api/data-stocks',
-      banks: '/api/banks',
-      coupons: '/api/coupons',
-      news: '/api/news',
-      notifications: '/api/notifications',
-      settings: '/api/settings',
-      reviews: '/api/reviews'
-    }
-  });
+// app.get('/', (req, res) => {
+//   res.json({
+//     success: true,
+//     message: 'REST API with Role-Based Access Control is running',
+//     version: '2.0.0',
+//     timestamp: new Date().toISOString(),
+//     documentation: 'https://docs.verospace.app/',
+//     endpoints: {
+//       auth: '/api/auth',
+//       users: '/api/users',
+//       categories: '/api/categories',
+//       products: '/api/products',
+//       variants: '/api/variants',
+//       cart: '/api/cart',
+//       transactions: '/api/transactions',
+//       orderItems: '/api/order-items',
+//       dataStocks: '/api/data-stocks',
+//       banks: '/api/banks',
+//       coupons: '/api/coupons',
+//       news: '/api/news',
+//       notifications: '/api/notifications',
+//       settings: '/api/settings',
+//       reviews: '/api/reviews'
+//     }
+//   });
+  app.get('/', (req, res) => {
+  // Sending an HTML response that includes an inline JavaScript script
+  res.send(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Express JS Response</title>
+    </head>
+    <body>
+      <h1>REST API with Role-Based Access Control is running</h1>
+      <p>Version: 2.0.0</p>
+      <p>Timestamp: ${new Date().toISOString()}</p>
+      <p>Documentation: <a href="https://docs.verospace.app/" target="_blank">https://docs.verospace.app/</a></p>
+      <h2>Endpoints:</h2>
+        <script src="https://docs.verospace.app/~gitbook/embed/script.js"></script>
+    </body>
+    </html>
+  `);
 });
 
 // API Routes
@@ -102,6 +121,7 @@ Server is running on port ${PORT}
 
 API Documentation:
 GET https://docs.verospace.app/
+
 
 Roles: user, admin, reseller
 JWT Authentication: No Expiration

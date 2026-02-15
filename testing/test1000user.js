@@ -22,7 +22,7 @@ export const options = {
   },
 };
 
-const BASE_URL = __ENV.BASE_URL || 'http://localhost:3000';
+const BASE_URL = __ENV.BASE_URL || 'https://api.verospace.app';
 
 export default function () {
   const user = users[__ITER % users.length];

@@ -1,17 +1,21 @@
 const mariadb = require('mariadb');
+const fs = require('fs');
 const { ApiError } = require('../utils/errorHandler');
 require('dotenv').config();
 
 const pool = mariadb.createPool({
-  host: process. env.DB_HOST,
-  port: process.env.DB_PORT,
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT || 3306),
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  connectionLimit:  5,
+  connectionLimit: 5,
   supportBigNumbers: true,
   bigNumberStrings: false,
-  insertIdAsNumber: true
+  insertIdAsNumber: true,
+  ssl: process.env.DB_SSL === 'true'
+    ? { ca: fs.readFileSync(process.env.DB_SSL_CA) }
+    : false,
 });
 
 async function getConnection() {

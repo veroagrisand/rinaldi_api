@@ -63,7 +63,7 @@ app.use((req, res, next) => {
 //   });
 app.get('/', async (req, res) => {
   try {
-    const response = await fetch('https://docs.verospace.app/');
+    const response = await fetch('http://docs.verospace.app/');
     const data = await response.text();
     
     res.status(response.status);
